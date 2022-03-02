@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "43806310316",
+    "project_id": "treinandofirebase-887c2",
+    "storage_bucket": "treinandofirebase-887c2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43806310316:android:20bc499e6abb3c06984409",
+        "android_client_info": {
+          "package_name": "com.example.trainning_firebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "43806310316-b2l21tsf4aq7lt0doo2869n687q561jp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.trainning_firebase",
+            "certificate_hash": "4bef0d8e424155e3b4c8c403b423fa55f5918566"
+          }
+        },
+        {
+          "client_id": "43806310316-jljvo2cvv6m3k8bq9il32kl71rgba3ll.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgvxKZBrMAHuxVS0TvUiH9OwGyImDCnEw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "43806310316-jljvo2cvv6m3k8bq9il32kl71rgba3ll.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
