@@ -1,15 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:trainning_firebase/firebase_messaging/custom_firebase_messaging.dart';
+import 'package:trainning_firebase/remote_config/custom_remote_config.dart';
+import 'package:trainning_firebase/remote_config/custom_visible_rc_widget.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-Future<void> main() async {
+main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
   await CustomFirebaseMessaging().inicialize();
   await CustomFirebaseMessaging().getTokenFirebase();
 
+  await CustomRemoteConfig().initialize();
   runApp(const MyApp());
 }
 
@@ -48,11 +51,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  bool _isLoading = false;
 
-  void _incrementCounter() {
+  final int _counter = 0;
+
+  void _incrementCounter() async {
     setState(() {
-      _counter++;
+      _isLoading = true;
+    });
+    await CustomRemoteConfig().forceFetch();
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -60,28 +69,43 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: CustomRemoteConfig()
+                .getValueOrDefault(key: 'isActiveBlue', defaultValue: false)
+            ? Colors.blue
+            : Colors.red,
         title: Text(widget.title),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Center(
+              // Center is a layout widget. It takes a single child and positions it
+              // in the middle of the parent.
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    CustomRemoteConfig()
+                        .getValueOrDefault(
+                            key: "novaString", defaultValue: 'defaultValue')
+                        .toString(),
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                  CustomVisibleRCWidget(
+                    rmKey: 'show_container',
+                    defaultValue: false,
+                    child: Container(
+                      color: Colors.blue,
+                      height: 100,
+                      width: 100,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        child: const Icon(Icons.refresh),
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
