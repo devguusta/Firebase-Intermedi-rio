@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:trainning_firebase/firebase_messaging/custom_firebase_messaging.dart';
 import 'package:trainning_firebase/remote_config/custom_remote_config.dart';
@@ -6,14 +9,23 @@ import 'package:trainning_firebase/remote_config/custom_visible_rc_widget.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp();
 
-  await Firebase.initializeApp();
-  await CustomFirebaseMessaging().inicialize();
-  await CustomFirebaseMessaging().getTokenFirebase();
+      await CustomRemoteConfig().initialize();
+      await CustomFirebaseMessaging().inicialize(
+        callback: () async => await CustomRemoteConfig().forceFetch(),
+      );
+      await CustomFirebaseMessaging().getTokenFirebase();
 
-  await CustomRemoteConfig().initialize();
-  runApp(const MyApp());
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+
+      runApp(const MyApp());
+    },
+    (error, stack) => FirebaseCrashlytics.instance.recordError(error, stack),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -83,6 +95,13 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  ElevatedButton(
+                      onPressed: () {
+                        FirebaseCrashlytics.instance
+                            .log("Ocorreu uma exception manual");
+                        throw Error();
+                      },
+                      child: const Text("BTN")),
                   Text(
                     CustomRemoteConfig()
                         .getValueOrDefault(

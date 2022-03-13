@@ -19,7 +19,10 @@ class CustomFirebaseMessaging {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
 
-      if (message.data['forceFatchRC'] != null) return callback?.call();
+      if (message.data['forceFatchRC'] != null) {
+        callback?.call();
+        return;
+      }
 
       if (notification != null && android != null) {
         _customLocalNotification.androidNotification(notification, android);
