@@ -39,6 +39,7 @@ dependencies:
   flutter_local_notifications: ^9.3.3
   firebase_remote_config: ^2.0.2
   firebase_crashlytics: ^2.5.3
+  firebase_analytics: ^9.1.2
 
 dev_dependencies:
   flutter_test:
