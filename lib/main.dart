@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
+import 'package:trainning_firebase/firebase_analytics/custom_firebase_analytics.dart';
 import 'package:trainning_firebase/firebase_messaging/custom_firebase_messaging.dart';
 import 'package:trainning_firebase/remote_config/custom_remote_config.dart';
 import 'package:trainning_firebase/remote_config/custom_visible_rc_widget.dart';
@@ -72,6 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
       _isLoading = true;
     });
     await CustomRemoteConfig().forceFetch();
+    await CustomFirebaseAnylitcs().getCounter();
+    await CustomFirebaseAnylitcs().getEvent();
     setState(() {
       _isLoading = false;
     });
@@ -96,9 +99,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
                         FirebaseCrashlytics.instance
                             .log("Ocorreu uma exception manual");
+                        await CustomRemoteConfig().forceFetch();
                         throw Error();
                       },
                       child: const Text("BTN")),
@@ -106,6 +110,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     CustomRemoteConfig()
                         .getValueOrDefault(
                             key: "novaString", defaultValue: 'defaultValue')
+                        .toString(),
+                    style: Theme.of(context).textTheme.headline4,
+                  ),
+                  Text(
+                    CustomRemoteConfig()
+                        .getValueOrDefault(
+                            key: "teste_condition",
+                            defaultValue: 'defaultValue')
                         .toString(),
                     style: Theme.of(context).textTheme.headline4,
                   ),
